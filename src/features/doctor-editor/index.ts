@@ -1,0 +1,1 @@
+export { DoctorEditor } from './DoctorEditor'
