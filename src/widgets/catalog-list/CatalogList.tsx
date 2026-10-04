@@ -26,8 +26,10 @@ function formatRow(resource: CatalogResource, item: CatalogEditorValue): string[
     return [city.name, String(city.doctors_count)]
   }
   if (resource === 'users') return [(item as { email: string }).email]
-  const catalogItem = item as { name: string; doctors_count: number }
-  return [catalogItem.name, String(catalogItem.doctors_count)]
+  const catalogItem = item as { name: string; doctors_count: number; site_link?: string }
+  return resource === 'courses'
+    ? [catalogItem.name, catalogItem.site_link ?? '', String(catalogItem.doctors_count)]
+    : [catalogItem.name, String(catalogItem.doctors_count)]
 }
 
 export function CatalogList({ resource }: { resource: CatalogResource }) {
@@ -66,7 +68,12 @@ export function CatalogList({ resource }: { resource: CatalogResource }) {
       const updated = editorValue
         ? await (service.update as (id: number, data: Record<string, unknown>) => Promise<CatalogEditorValue>)(editorValue.id, data)
         : await (service.create as (data: Record<string, unknown>) => Promise<CatalogEditorValue>)(data)
-      setItems((current) => editorValue ? current.map((item) => item.id === updated.id ? updated : item) : [...current, updated])
+      setItems((current) => editorValue ? current.map((item) => {
+        if (item.id !== updated.id) return item
+        if (resource === 'users') return updated
+        const doctorsCount = (item as { doctors_count?: number }).doctors_count
+        return { ...updated, doctors_count: doctorsCount } as CatalogEditorValue
+      }) : [...current, updated])
       dispatch(showMessage({ type: 'success', text: editorValue ? 'Изменения сохранены' : 'Запись добавлена' }))
     } finally {
       dispatch(setGlobalLoading(false))
@@ -94,7 +101,9 @@ export function CatalogList({ resource }: { resource: CatalogResource }) {
     ? ['Название', 'Количество врачей']
     : resource === 'users'
       ? ['Электронная почта']
-      : ['Название', 'Количество врачей']
+      : resource === 'courses'
+        ? ['Название', 'Ссылка на курс', 'Количество врачей']
+        : ['Название', 'Количество врачей']
   return (
     <section className="content-section">
       <div className="page-toolbar">
@@ -111,7 +120,7 @@ export function CatalogList({ resource }: { resource: CatalogResource }) {
             <thead><tr><th>ID</th>{headers.map((header) => <th key={header}>{header}</th>)}<th className="table-actions">Действия</th></tr></thead>
             <tbody>{filteredItems.map((item) => <tr key={item.id}>
               <td className="cell-muted">{item.id}</td>
-              {formatRow(resource, item).map((cell, index) => <td key={index}>{cell}</td>)}
+              {formatRow(resource, item).map((cell, index) => <td key={index}>{resource === 'courses' && index === 1 ? cell ? <a className="table-link" href={cell} target="_blank" rel="noreferrer">Открыть</a> : <span className="cell-muted">—</span> : cell}</td>)}
               <td className="table-actions"><Button variant="ghost" onClick={() => setEditorValue(item)}>Изменить</Button><Button variant="ghost" className="button--danger-text" onClick={() => setDeleting(item)}>Удалить</Button></td>
             </tr>)}</tbody>
           </table>

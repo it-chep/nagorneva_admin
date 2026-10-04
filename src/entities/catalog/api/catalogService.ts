@@ -8,7 +8,13 @@ const collectionPath = (resource: CatalogResource) => `${root}/${resource}/`
 function normalizeEntity<T extends CatalogEntity>(entity: T): T {
   const value = entity as unknown as Record<string, unknown>
   const doctorsCount = Number(value.doctors_count ?? value.doctorsCount)
-  return { ...entity, id: Number(entity.id), doctors_count: Number.isFinite(doctorsCount) ? doctorsCount : 0 } as T
+  const siteLink = value.site_link ?? value.siteLink
+  return {
+    ...entity,
+    id: Number(entity.id),
+    doctors_count: Number.isFinite(doctorsCount) ? doctorsCount : 0,
+    ...(typeof siteLink === 'string' ? { site_link: siteLink } : {}),
+  } as T
 }
 
 async function list<T extends CatalogEntity>(resource: CatalogResource) {

@@ -21,6 +21,7 @@ export interface Specialty extends EntityWithId {
 export interface Course extends EntityWithId {
   name: string
   doctors_count: number
+  site_link: string
 }
 
 export type CatalogResource = 'users' | 'cities' | 'specialties' | 'courses'

@@ -26,6 +26,7 @@ export function CatalogEditor({ resource, value, onClose, onSave }: CatalogEdito
   const [password, setPassword] = useState('')
   const [lat, setLat] = useState(String(current?.lat ?? ''))
   const [lon, setLon] = useState(String(current?.lon ?? ''))
+  const [siteLink, setSiteLink] = useState(String(current?.site_link ?? ''))
   const [pending, setPending] = useState(false)
   const [error, setError] = useState('')
 
@@ -53,6 +54,7 @@ export function CatalogEditor({ resource, value, onClose, onSave }: CatalogEdito
       data.lon = numericLon
     } else {
       data.name = name.trim()
+      if (resource === 'courses') data.site_link = siteLink.trim()
     }
     if ((resource !== 'users' && !data.name) || (resource === 'users' && !data.email)) {
       setError('Заполните обязательные поля')
@@ -82,6 +84,9 @@ export function CatalogEditor({ resource, value, onClose, onSave }: CatalogEdito
             <TextField label="Широта" type="number" step="any" value={lat} onChange={(event) => setLat(event.target.value)} required />
             <TextField label="Долгота" type="number" step="any" value={lon} onChange={(event) => setLon(event.target.value)} required />
           </div>
+        </> : resource === 'courses' ? <>
+          <TextField label="Название" value={name} onChange={(event) => setName(event.target.value)} required />
+          <TextField label="Ссылка на курс" type="url" value={siteLink} onChange={(event) => setSiteLink(event.target.value)} placeholder="https://example.com/course" />
         </> : <TextField label="Название" value={name} onChange={(event) => setName(event.target.value)} required />}
         {error && <p className="form-error">{error}</p>}
         <div className="modal-actions">

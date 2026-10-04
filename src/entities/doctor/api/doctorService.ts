@@ -38,7 +38,7 @@ function normalizeSpecialty(value: unknown): Specialty {
 
 function normalizeCourse(value: unknown): Course {
   const course = asRecord(value)
-  return { id: asNumber(course.id), name: asString(course.name), doctors_count: asNumber(course.doctors_count ?? course.doctorsCount) }
+  return { id: asNumber(course.id), name: asString(course.name), doctors_count: asNumber(course.doctors_count ?? course.doctorsCount), site_link: asString(course.site_link ?? course.siteLink) }
 }
 
 function normalizeDoctor(value: Doctor | RawDoctor): Doctor {
