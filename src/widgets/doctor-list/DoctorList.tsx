@@ -34,13 +34,11 @@ export function DoctorList() {
   }, [dispatch])
   useEffect(() => { void load() }, [load])
 
-  const citiesById = useMemo(() => new Map(cities.map((city) => [city.id, city.name])), [cities])
-  const specialtiesById = useMemo(() => new Map(specialties.map((specialty) => [specialty.id, specialty.name])), [specialties])
   const filtered = useMemo(() => {
     const needle = search.trim().toLowerCase()
     if (!needle) return doctors
-    return doctors.filter((doctor) => [doctor.name, doctor.full_name, citiesById.get(doctor.city_id), specialtiesById.get(doctor.specialty_id), String(doctor.id)].some((part) => part?.toLowerCase().includes(needle)))
-  }, [citiesById, doctors, search, specialtiesById])
+    return doctors.filter((doctor) => [doctor.name, doctor.full_name, doctor.city.name, doctor.specialty.name, String(doctor.id)].some((part) => part.toLowerCase().includes(needle)))
+  }, [doctors, search])
 
   const save = async (payload: DoctorPayload) => {
     dispatch(setGlobalLoading(true))
@@ -72,14 +70,14 @@ export function DoctorList() {
 
   return (
     <section className="content-section">
-      <div className="page-toolbar"><div><p className="eyebrow">Основная сущность</p><h1>Врачи</h1></div><Button onClick={() => setEditor(null)}>Добавить врача</Button></div>
+      <div className="page-toolbar"><div><h1>Врачи</h1></div><Button onClick={() => setEditor(null)}>Добавить врача</Button></div>
       <div className="list-controls"><input className="input list-search" placeholder="Имя, город, специальность или ID" value={search} onChange={(event) => setSearch(event.target.value)} /><span>{filtered.length} из {doctors.length}</span></div>
       {loading ? <div className="center-loader"><span className="spinner" /></div> : filtered.length === 0 ? <EmptyState>{search ? 'Врачи не найдены.' : 'Создайте первую карточку врача.'}</EmptyState> : <div className="table-wrap"><table>
         <thead><tr><th>ID</th><th>Врач</th><th>Город</th><th>Специальность</th><th>Статус</th><th className="table-actions">Действия</th></tr></thead>
         <tbody>{filtered.map((doctor) => <tr key={doctor.id}>
           <td className="cell-muted">{doctor.id}</td>
           <td><Link className="entity-link" to={`/doctors/${doctor.id}`}>{doctor.name}<small>{doctor.full_name}</small></Link></td>
-          <td>{citiesById.get(doctor.city_id) ?? `#${doctor.city_id}`}</td><td>{specialtiesById.get(doctor.specialty_id) ?? `#${doctor.specialty_id}`}</td>
+          <td>{doctor.city.name}</td><td>{doctor.specialty.name}</td>
           <td><span className={`status ${doctor.is_active ? 'status--active' : 'status--inactive'}`}>{doctor.is_active ? 'Активен' : 'Скрыт'}</span></td>
           <td className="table-actions"><Link className="table-link" to={`/doctors/${doctor.id}`}>Открыть</Link><Button variant="ghost" onClick={() => setEditor(doctor)}>Изменить</Button><Button variant="ghost" className="button--danger-text" onClick={() => setDeleting(doctor)}>Удалить</Button></td>
         </tr>)}</tbody>

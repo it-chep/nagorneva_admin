@@ -69,7 +69,7 @@ export function ReviewList({ doctor, compact = false }: ReviewListProps) {
   }
 
   return <section className={compact ? 'nested-section' : 'content-section'}>
-    <div className="page-toolbar"><div>{!compact && <p className="eyebrow">Контент</p>}<h1>{compact ? 'Отзывы врача' : 'Отзывы'}</h1></div><Button onClick={() => setEditor(null)}>Добавить отзыв</Button></div>
+    <div className="page-toolbar"><div><h1>{compact ? 'Отзывы врача' : 'Отзывы'}</h1></div><Button onClick={() => setEditor(null)}>Добавить отзыв</Button></div>
     {loading ? <div className="center-loader"><span className="spinner" /></div> : reviews.length === 0 ? <EmptyState>Отзывов пока нет.</EmptyState> : <div className="table-wrap"><table>
       <thead><tr><th>ID</th>{!doctor && <th>Врач</th>}<th>Курс</th><th>Оценка</th><th>Текст</th><th>Статус</th><th className="table-actions">Действия</th></tr></thead>
       <tbody>{reviews.map((review) => <tr key={review.id}>

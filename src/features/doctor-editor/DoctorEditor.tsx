@@ -26,8 +26,8 @@ function getInitialState(doctor?: Doctor): FormState {
   return {
     name: doctor?.name ?? '',
     full_name: doctor?.full_name ?? '',
-    city_id: doctor ? String(doctor.city_id) : '',
-    specialty_id: doctor ? String(doctor.specialty_id) : '',
+    city_id: doctor ? String(doctor.city.id) : '',
+    specialty_id: doctor ? String(doctor.specialty.id) : '',
     lat: doctor ? String(doctor.lat) : '',
     lon: doctor ? String(doctor.lon) : '',
     personal_data_consent: doctor?.personal_data_consent ?? true,
@@ -74,11 +74,11 @@ export function DoctorEditor({ cities, specialties, doctor, onClose, onSave }: D
           <TextField label="Полное имя" value={form.full_name} onChange={(event) => update('full_name', event.target.value)} required placeholder="ФИО врача" />
         </div>
         <div className="form-grid form-grid--two">
-          <Select label="Город" value={form.city_id} onChange={(event) => update('city_id', event.target.value)} required>
+          <Select label="Город" value={form.city_id} onChange={(value) => update('city_id', value)} required>
             <option value="">Выберите город</option>
             {cities.map((city) => <option value={city.id} key={city.id}>{city.name}</option>)}
           </Select>
-          <Select label="Специальность" value={form.specialty_id} onChange={(event) => update('specialty_id', event.target.value)} required>
+          <Select label="Специальность" value={form.specialty_id} onChange={(value) => update('specialty_id', value)} required>
             <option value="">Выберите специальность</option>
             {specialties.map((specialty) => <option value={specialty.id} key={specialty.id}>{specialty.name}</option>)}
           </Select>

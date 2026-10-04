@@ -51,14 +51,14 @@ export function ReviewEditor({ doctors, courses, review, fixedDoctorId, onClose,
     <Modal title={isEdit ? 'Изменить отзыв' : 'Добавить отзыв'} onClose={onClose} wide>
       <form className="form-grid" onSubmit={onSubmit}>
         <div className="form-grid form-grid--two">
-          <Select label="Врач" value={form.doctor_id} onChange={(event) => update('doctor_id', event.target.value)} disabled={Boolean(fixedDoctorId)} required>
+          <Select label="Врач" value={form.doctor_id} onChange={(value) => update('doctor_id', value)} disabled={Boolean(fixedDoctorId)} required>
             <option value="">Выберите врача</option>{doctors.map((doctor) => <option key={doctor.id} value={doctor.id}>{doctor.name} · #{doctor.id}</option>)}
           </Select>
-          <Select label="Курс" value={form.course_id} onChange={(event) => update('course_id', event.target.value)} required>
+          <Select label="Курс" value={form.course_id} onChange={(value) => update('course_id', value)} required>
             <option value="">Выберите курс</option>{courses.map((course) => <option key={course.id} value={course.id}>{course.name}</option>)}
           </Select>
         </div>
-        <Select label="Оценка" value={form.rating} onChange={(event) => update('rating', event.target.value)} required>
+        <Select label="Оценка" value={form.rating} onChange={(value) => update('rating', value)} required>
           {[1, 2, 3, 4, 5].map((rating) => <option value={rating} key={rating}>{rating} из 5</option>)}
         </Select>
         <TextArea label="Текст отзыва" rows={5} value={form.comment} onChange={(event) => update('comment', event.target.value)} required />

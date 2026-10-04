@@ -92,10 +92,7 @@ export function CatalogList({ resource }: { resource: CatalogResource }) {
   return (
     <section className="content-section">
       <div className="page-toolbar">
-        <div>
-          <p className="eyebrow">Справочник</p>
-          <h1>{resourceTitle[resource]}</h1>
-        </div>
+        <div><h1>{resourceTitle[resource]}</h1></div>
         <Button onClick={() => setEditorValue(null)}>Добавить</Button>
       </div>
       <div className="list-controls">
