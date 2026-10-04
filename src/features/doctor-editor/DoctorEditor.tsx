@@ -28,8 +28,8 @@ function getInitialState(doctor?: Doctor): FormState {
     full_name: doctor?.full_name ?? '',
     city_id: doctor ? String(doctor.city.id) : '',
     specialty_id: doctor ? String(doctor.specialty.id) : '',
-    lat: doctor ? String(doctor.lat) : '',
-    lon: doctor ? String(doctor.lon) : '',
+    lat: doctor ? String(doctor.lat) : '0',
+    lon: doctor ? String(doctor.lon) : '0',
     personal_data_consent: doctor?.personal_data_consent ?? true,
     is_active: doctor?.is_active ?? true,
   }
@@ -84,11 +84,7 @@ export function DoctorEditor({ cities, specialties, doctor, onClose, onSave }: D
           </Select>
         </div>
         <div className="form-grid form-grid--two">
-          <TextField label="Широта карточки" type="number" step="any" value={form.lat} onChange={(event) => update('lat', event.target.value)} required />
-          <TextField label="Долгота карточки" type="number" step="any" value={form.lon} onChange={(event) => update('lon', event.target.value)} required />
-        </div>
-        <div className="form-grid form-grid--two">
-          <Toggle label="Согласие на персональные данные" checked={form.personal_data_consent} onChange={(value) => update('personal_data_consent', value)} hint="Без согласия ФИО и фото не возвращаются в публичном API." />
+          <Toggle label="Согласие на персональные данные" checked={form.personal_data_consent} onChange={(value) => update('personal_data_consent', value)} />
           <Toggle label="Карточка активна" checked={form.is_active} onChange={(value) => update('is_active', value)} />
         </div>
         {error && <p className="form-error">{error}</p>}

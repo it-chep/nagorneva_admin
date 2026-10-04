@@ -5,7 +5,7 @@ import { doctorService, type Doctor, type DoctorPayload } from '../../entities/d
 import { setGlobalLoading } from '../../entities/globalLoading'
 import { showMessage } from '../../entities/globalMessage'
 import { DoctorEditor } from '../../features/doctor-editor'
-import { Button, ConfirmDialog, EmptyState } from '../../shared/ui'
+import { Button, EmptyState } from '../../shared/ui'
 import { useAppDispatch } from '../../app/store/store'
 
 export function DoctorList() {
@@ -16,8 +16,6 @@ export function DoctorList() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [editor, setEditor] = useState<Doctor | null | undefined>(undefined)
-  const [deleting, setDeleting] = useState<Doctor | null>(null)
-  const [deletePending, setDeletePending] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -51,39 +49,20 @@ export function DoctorList() {
     }
   }
 
-  const remove = async () => {
-    if (!deleting) return
-    setDeletePending(true)
-    dispatch(setGlobalLoading(true))
-    try {
-      await doctorService.remove(deleting.id)
-      setDoctors((items) => items.filter((doctor) => doctor.id !== deleting.id))
-      setDeleting(null)
-      dispatch(showMessage({ type: 'success', text: 'Врач удалён' }))
-    } catch (error) {
-      dispatch(showMessage({ type: 'error', text: error instanceof Error ? error.message : 'Не удалось удалить врача' }))
-    } finally {
-      setDeletePending(false)
-      dispatch(setGlobalLoading(false))
-    }
-  }
-
   return (
     <section className="content-section">
       <div className="page-toolbar"><div><h1>Врачи</h1></div><Button onClick={() => setEditor(null)}>Добавить врача</Button></div>
       <div className="list-controls"><input className="input list-search" placeholder="Имя, город, специальность или ID" value={search} onChange={(event) => setSearch(event.target.value)} /><span>{filtered.length} из {doctors.length}</span></div>
       {loading ? <div className="center-loader"><span className="spinner" /></div> : filtered.length === 0 ? <EmptyState>{search ? 'Врачи не найдены.' : 'Создайте первую карточку врача.'}</EmptyState> : <div className="table-wrap"><table>
-        <thead><tr><th>ID</th><th>Врач</th><th>Город</th><th>Специальность</th><th>Статус</th><th className="table-actions">Действия</th></tr></thead>
+        <thead><tr><th>ID</th><th>Врач</th><th>Город</th><th>Специальность</th><th>Отзывы</th><th>Статус</th></tr></thead>
         <tbody>{filtered.map((doctor) => <tr key={doctor.id}>
           <td className="cell-muted">{doctor.id}</td>
           <td><Link className="entity-link" to={`/doctors/${doctor.id}`}>{doctor.name}<small>{doctor.full_name}</small></Link></td>
-          <td>{doctor.city.name}</td><td>{doctor.specialty.name}</td>
+          <td>{doctor.city.name}</td><td>{doctor.specialty.name}</td><td className="cell-muted">{doctor.reviews_count}</td>
           <td><span className={`status ${doctor.is_active ? 'status--active' : 'status--inactive'}`}>{doctor.is_active ? 'Активен' : 'Скрыт'}</span></td>
-          <td className="table-actions"><Link className="table-link" to={`/doctors/${doctor.id}`}>Открыть</Link><Button variant="ghost" onClick={() => setEditor(doctor)}>Изменить</Button><Button variant="ghost" className="button--danger-text" onClick={() => setDeleting(doctor)}>Удалить</Button></td>
         </tr>)}</tbody>
       </table></div>}
       {editor !== undefined && <DoctorEditor cities={cities} specialties={specialties} doctor={editor ?? undefined} onClose={() => setEditor(undefined)} onSave={save} />}
-      {deleting && <ConfirmDialog description={`Удалить карточку «${deleting.name}» вместе с привязанными данными? Это действие нельзя отменить.`} onCancel={() => setDeleting(null)} onConfirm={() => void remove()} loading={deletePending} />}
     </section>
   )
 }

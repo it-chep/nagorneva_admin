@@ -10,14 +10,17 @@ export interface City extends EntityWithId {
   name: string
   lat: number
   lon: number
+  doctors_count: number
 }
 
 export interface Specialty extends EntityWithId {
   name: string
+  doctors_count: number
 }
 
 export interface Course extends EntityWithId {
   name: string
+  doctors_count: number
 }
 
 export type CatalogResource = 'users' | 'cities' | 'specialties' | 'courses'

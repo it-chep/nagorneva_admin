@@ -22,10 +22,12 @@ const resourceEntityTitle: Record<CatalogResource, string> = {
 
 function formatRow(resource: CatalogResource, item: CatalogEditorValue): string[] {
   if (resource === 'cities') {
-    const city = item as { name: string; lat: number; lon: number }
-    return [city.name, String(city.lat), String(city.lon)]
+    const city = item as { name: string; doctors_count: number }
+    return [city.name, String(city.doctors_count)]
   }
-  return [resource === 'users' ? (item as { email: string }).email : (item as { name: string }).name]
+  if (resource === 'users') return [(item as { email: string }).email]
+  const catalogItem = item as { name: string; doctors_count: number }
+  return [catalogItem.name, String(catalogItem.doctors_count)]
 }
 
 export function CatalogList({ resource }: { resource: CatalogResource }) {
@@ -88,7 +90,11 @@ export function CatalogList({ resource }: { resource: CatalogResource }) {
     }
   }
 
-  const headers = resource === 'cities' ? ['Название', 'Широта', 'Долгота'] : [resource === 'users' ? 'Электронная почта' : 'Название']
+  const headers = resource === 'cities'
+    ? ['Название', 'Количество врачей']
+    : resource === 'users'
+      ? ['Электронная почта']
+      : ['Название', 'Количество врачей']
   return (
     <section className="content-section">
       <div className="page-toolbar">

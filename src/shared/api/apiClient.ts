@@ -17,16 +17,18 @@ function parseError(body: unknown, fallback: string): string {
   return fallback
 }
 
-export async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
+async function request<T>(path: string, init: RequestInit, withAuthorization: boolean): Promise<T> {
   const headers = new Headers(init.headers)
-  const token = tokenStorage.get()
-  if (token) headers.set('Authorization', `Bearer ${token}`)
+  if (withAuthorization) {
+    const token = tokenStorage.get()
+    if (token) headers.set('Authorization', `Bearer ${token}`)
+  }
   if (init.body && !(init.body instanceof FormData) && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json')
   }
 
   const response = await fetch(`${baseUrl}${path}`, { ...init, headers })
-  if (response.status === 401 || response.status === 403) {
+  if (withAuthorization && (response.status === 401 || response.status === 403)) {
     window.dispatchEvent(new Event('nagorneva:auth-expired'))
   }
   if (!response.ok) {
@@ -40,6 +42,14 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}): Promi
   }
   if (response.status === 204) return undefined as T
   return response.json() as Promise<T>
+}
+
+export function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
+  return request<T>(path, init, true)
+}
+
+export function publicApiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
+  return request<T>(path, init, false)
 }
 
 export const apiUrl = baseUrl

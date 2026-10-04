@@ -6,7 +6,9 @@ const root = '/api/v1/admin'
 const collectionPath = (resource: CatalogResource) => `${root}/${resource}/`
 
 function normalizeEntity<T extends CatalogEntity>(entity: T): T {
-  return { ...entity, id: Number(entity.id) } as T
+  const value = entity as unknown as Record<string, unknown>
+  const doctorsCount = Number(value.doctors_count ?? value.doctorsCount)
+  return { ...entity, id: Number(entity.id), doctors_count: Number.isFinite(doctorsCount) ? doctorsCount : 0 } as T
 }
 
 async function list<T extends CatalogEntity>(resource: CatalogResource) {

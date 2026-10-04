@@ -1,3 +1,3 @@
 export { doctorService } from './api/doctorService'
 export { doctorReducer, setCurrentDoctor, patchCurrentDoctor } from './model/doctorSlice'
-export type { Doctor, DoctorPayload } from './model/types'
+export type { CatalogDoctor, Doctor, DoctorCatalogFilters, DoctorFilterResult, DoctorPayload } from './model/types'
