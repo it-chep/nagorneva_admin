@@ -1,6 +1,6 @@
 APP_NAME := nagorneva-admin
 IMAGE_NAME ?= $(APP_NAME)
-PORT ?= 8081
+PORT ?= 3000
 VITE_API_URL ?= http://localhost:8080
 
 .PHONY: install dev build preview docker-build docker-run

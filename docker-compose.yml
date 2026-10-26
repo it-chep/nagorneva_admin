@@ -1,0 +1,9 @@
+services:
+  admin:
+    build:
+      context: .
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+    ports:
+      - "${PORT:-3000}:80"
+    restart: unless-stopped
